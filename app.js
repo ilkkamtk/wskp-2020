@@ -8,6 +8,7 @@ const app = express();
 const port = 3000;
 
 app.use(cors());
+app.use(express.static('uploads'));
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));

@@ -40,8 +40,23 @@ const addCat = async (params) => {
   }
 }
 
+const updateCat = async (params) => {
+  try {
+    const [rows] = await promisePool.execute(
+        'UPDATE wop_cat SET name = ?, age = ?, weight = ?, owner = ? WHERE cat_id = ?',
+        params
+    );
+    console.log('rows', rows);
+    return rows;
+  } catch (e) {
+    console.log('catModel error', e.message);
+    return {error: 'DB Error'};
+  }
+}
+
 module.exports = {
   getAllCats,
   getCat,
   addCat,
+  updateCat,
 };

@@ -16,7 +16,7 @@ const cat_get = async (req, res) => {
 };
 
 const cat_create_post = async (req, res) => {
-  console.log(req.body, req.file);
+  console.log('cat_create_post', req.body, req.file);
   // object destructuring
   const {name, age, weight, owner} = req.body;
   const params = [name, age, weight, owner, req.file.filename];
@@ -24,8 +24,18 @@ const cat_create_post = async (req, res) => {
   res.json({message: 'upload ok'});
 };
 
+const cat_update_put = async (req, res) => {
+  console.log('cat_update_put', req.body);
+  // object destructuring
+  const {name, age, weight, owner, id} = req.body;
+  const params = [name, age, weight, owner, id];
+  const cat = await catModel.updateCat(params);
+  res.json({message: 'modify ok'});
+};
+
 module.exports = {
   cat_list_get,
   cat_get,
   cat_create_post,
+  cat_update_put
 };

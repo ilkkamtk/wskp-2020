@@ -88,7 +88,7 @@ const getCat = async () => {
   try {
     const options = {
       headers: {
-        'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
+        Authorization: 'Bearer ' + sessionStorage.getItem('token'),
       },
     };
     const response = await fetch(url + '/cat', options);

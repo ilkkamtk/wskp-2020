@@ -25,8 +25,15 @@ const cat_create_post = async (req, res) => {
     return res.status(400).json({errors: errors.array()});
   }
 
-  const coords = await getCoordinates(req.file.path);
+  let coords = [];
+  try {
+    coords = await getCoordinates(req.file.path);
+  } catch (e) {
+    console.log(e);
+    coords = [60,20];
+  }
 
+  console.log('coords', coords);
   // object destructuring
   const {name, age, weight, owner} = req.body;
   const params = [name, age, weight, owner, req.file.filename, coords];

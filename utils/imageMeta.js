@@ -12,11 +12,17 @@ const getCoordinates = (imgFile) => { // imgFile = full path to uploaded image
         } else {
           console.log('exifData: ', exifData); // Do something with your data!
           // coordinates below should be an array of GPS coordinates in decimal format: [longitude, latitude]
-          const coordinates = [
-            gpsToDecimal(exifData.gps.GPSLongitude, exifData.gps.GPSLongitudeRef),
-            gpsToDecimal(exifData.gps.GPSLatitude, exifData.gps.GPSLatitudeRef),
-          ];
-          resolve(coordinates);
+          if(exifData.gps.GPSLongitude) {
+            const coordinates = [
+              gpsToDecimal(exifData.gps.GPSLongitude,
+                  exifData.gps.GPSLongitudeRef),
+              gpsToDecimal(exifData.gps.GPSLatitude,
+                  exifData.gps.GPSLatitudeRef),
+            ];
+            resolve(coordinates);
+          } else {
+            reject('no gps data');
+          }
         }
       });
     } catch (error) {

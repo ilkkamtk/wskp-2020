@@ -3,6 +3,7 @@
 const {validationResult} = require('express-validator');
 const catModel = require('../models/catModel');
 const {makeThumbnail} = require('../utils/resize');
+const {getCoordinates} = require('../utils/imageMeta');
 
 const cats = catModel.cats;
 
@@ -24,9 +25,11 @@ const cat_create_post = async (req, res) => {
     return res.status(400).json({errors: errors.array()});
   }
 
+  const coords = await getCoordinates(req.file.path);
+
   // object destructuring
   const {name, age, weight, owner} = req.body;
-  const params = [name, age, weight, owner, req.file.filename];
+  const params = [name, age, weight, owner, req.file.filename, coords];
   const cat = await catModel.addCat(params);
   res.json({message: 'upload ok'});
 };

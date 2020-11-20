@@ -1,33 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf8">
-  <title>Example</title>
-  <link href="./css/style.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Title</title>
 </head>
 <body>
-<div class="container">
-  <h1>List of cats</h1>
   <ul>
-    <!-- js creates list here -->
+    <li>
+      <a href="index1.html">Index 1</a>
+    </li>
+    <li>
+      <a href="index2.html">Index 2</a>
+    </li>
+    <li>
+      <a href="index3.html">Index 3</a>
+    </li>
+    <li>
+      <a href="index4.html">Index 4</a>
+    </li>
+    <li>
+      <a href="index5.html">Index 5</a>
+    </li>
   </ul>
-  <h3>Add user</h3>
-  <form action="http://localhost:3000/user" method="post" class="light-border" >
-    <input class="light-border" type="text" name="name" placeholder="Name" required>
-    <input class="light-border" type="email" name="email" placeholder="email" required>
-    <input class="light-border" type="password" name="passwd" placeholder="Password" required>
-    <button class="light-border" type="submit">Save</button>
-  </form>
-  <h3>Add Cat</h3>
-  <form action="http://localhost:3000/cat" method="post" enctype="multipart/form-data" class="light-border">
-    <input class="light-border" type="text" name="name" placeholder="Name" required>
-    <input class="light-border" type="text" name="age" placeholder="Age" required>
-    <input class="light-border" type="text" name="weight" placeholder="Weight" required>
-    <input class="light-border" type="text" name="owner"  placeholder="Owner id" required>
-    <input class="light-border" type="file" name="cat">
-    <button class="light-border" type="submit">Save</button>
-  </form>
-</div>
-<script src="./js/main.js"></script>
 </body>
 </html>

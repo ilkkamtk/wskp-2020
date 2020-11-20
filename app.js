@@ -17,15 +17,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
 app.use(bodyParser.json());
-app.use(express.static('public'));
-app.use(express.static('uploads'));
-app.use('/thumbnails', express.static('thumbnails'));
 
-app.use('/auth', authRoute);
-app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
-app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
-
-app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
 
 console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
@@ -55,3 +47,14 @@ if (process.env.NODE_ENV === 'production') {
   });
   https.createServer(options, app).listen(8000); //https traffic
 }
+
+app.use(express.static('public'));
+app.use(express.static('uploads'));
+app.use('/thumbnails', express.static('thumbnails'));
+
+app.use('/auth', authRoute);
+app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
+app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
+
+app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
+

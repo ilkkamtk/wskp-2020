@@ -17,7 +17,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
 app.use(bodyParser.json());
-
+console.log(`https://${req.headers.host}${proxypath}${req.url}`);
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
     if (req.secure) {

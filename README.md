@@ -15,5 +15,6 @@ Choose a branch and download as zip.
 1. Locally run `NODE_ENV=development nodemon app.js`
 1. On the server run 
    * `NODE_ENV=production node app.js`
-   * or `pm2 start app.js --env production`
+   * or `pm2 start app --env production`
+      * app.yml contains pm2 settings
 

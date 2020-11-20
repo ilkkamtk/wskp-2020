@@ -17,6 +17,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
 app.use(bodyParser.json());
+app.use(express.static('public'));
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
 
@@ -49,7 +50,6 @@ const options = {
 
 
 app.use(express.static('uploads'));
-app.use(express.static('public'));
 app.use('/thumbnails', express.static('thumbnails'));
 
 app.use('/auth', authRoute);

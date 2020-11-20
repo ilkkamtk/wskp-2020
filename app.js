@@ -34,8 +34,6 @@ if (process.env.NODE_ENV === 'production') {
     key: sslkey,
     cert: sslcert
   };
-  https.createServer(options, app).listen(8000); //https traffic
-
   app.use((req, res, next) => {
     console.log('tuotannossa ollaan');
     if (req.secure) {
@@ -54,4 +52,5 @@ if (process.env.NODE_ENV === 'production') {
       res.redirect(301, `https://${req.headers.host}${proxypath}${req.url}`);
     }
   });
+  https.createServer(options, app).listen(8000); //https traffic
 }

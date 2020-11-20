@@ -19,6 +19,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
+
+    const proxypath = process.env.PROXY_PASS || '';
     console.log(`https://${req.headers.host}${proxypath}${req.url}`);
     if (req.secure) {
       // request was via https, so do no special handling

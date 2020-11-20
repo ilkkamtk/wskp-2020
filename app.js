@@ -18,11 +18,26 @@ app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
 app.use(bodyParser.json());
 app.use(express.static('public'));
-if (process.env.NODE_ENV === 'production') {
-  app.use((req, res, next) => {
+app.use(express.static('uploads'));
+app.use('/thumbnails', express.static('thumbnails'));
 
-    const proxypath = process.env.PROXY_PASS || '';
-    console.log(`https://${req.headers.host}${proxypath}${req.url}`);
+app.use('/auth', authRoute);
+app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
+app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
+
+app.listen(3000); //normal http traffic
+
+if (process.env.NODE_ENV === 'production') {
+  const sslkey  = fs.readFileSync('/etc/pki/tls/private/ca.key');
+  const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');
+  const options = {
+    key: sslkey,
+    cert: sslcert
+  };
+  https.createServer(options, app).listen(8000); //https traffic
+
+  app.use((req, res, next) => {
+    console.log('tuotannossa ollaan');
     if (req.secure) {
       // request was via https, so do no special handling
       console.log('running secure!');
@@ -40,21 +55,3 @@ if (process.env.NODE_ENV === 'production') {
     }
   });
 }
-
-const sslkey  = fs.readFileSync('/etc/pki/tls/private/ca.key');
-const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');
-const options = {
-  key: sslkey,
-  cert: sslcert
-};
-
-
-app.use(express.static('uploads'));
-app.use('/thumbnails', express.static('thumbnails'));
-
-app.use('/auth', authRoute);
-app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
-app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
-
-app.listen(3000); //normal http traffic
-https.createServer(options, app).listen(8000); //https traffic

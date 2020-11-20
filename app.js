@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
-    console.log('tuotannossa ollaan');
+    console.log('tuotannossa ollaan', req.secure);
     if (req.secure) {
       // request was via https, so do no special handling
       console.log('running secure!');

@@ -15,5 +15,5 @@ Choose a branch and download as zip.
 1. Locally run `NODE_ENV=development nodemon app.js`
 1. On the server run 
    * `NODE_ENV=production nodemon app.js`
-   * or ``
+   * or `pm2 start app.js --env production`
 

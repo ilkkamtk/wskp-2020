@@ -19,16 +19,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 
-console.log(process.env.NODE_ENV);
+// if production redirect to https
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
-    // console.log('tuotannossa ollaan', req.secure);
     if (req.secure) {
       // request was via https, so do no special handling
-      // console.log('running secure!');
       next();
     } else {
-      // console.log('running insecure!');
       // if express app run under proxy with sub path URL
       // e.g. http://www.myserver.com/app/
       // then, in your .env, set PROXY_PASS=/app
@@ -49,8 +46,10 @@ app.use('/auth', authRoute);
 app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
 app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
 
+// http
 app.listen(3000, () => console.log(`HTTP on port ${3000}!`));
 
+// if production, add https
 if (process.env.NODE_ENV === 'production') {
   const sslkey = fs.readFileSync('/etc/pki/tls/private/ca.key');
   const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');

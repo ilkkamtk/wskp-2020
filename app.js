@@ -21,12 +21,6 @@ app.use(bodyParser.json());
 
 console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
-  const sslkey  = fs.readFileSync('/etc/pki/tls/private/ca.key');
-  const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');
-  const options = {
-    key: sslkey,
-    cert: sslcert
-  };
   app.use((req, res, next) => {
     console.log('tuotannossa ollaan');
     if (req.secure) {
@@ -45,7 +39,6 @@ if (process.env.NODE_ENV === 'production') {
       res.redirect(301, `https://${req.headers.host}${proxypath}${req.url}`);
     }
   });
-  https.createServer(options, app).listen(8000); //https traffic
 }
 
 app.use(express.static('public'));
@@ -56,5 +49,15 @@ app.use('/auth', authRoute);
 app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
 app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
 
-app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
+app.listen(3000, () => console.log(`HTTP on port ${3000}!`));
 
+if (process.env.NODE_ENV === 'production') {
+  const sslkey = fs.readFileSync('/etc/pki/tls/private/ca.key');
+  const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');
+  const options = {
+    key: sslkey,
+    cert: sslcert
+  };
+  https.createServer(options, app).listen(8000,
+      () => console.log(`HTTPS on port ${8000}!`)); //https traffic
+}

@@ -49,7 +49,7 @@ app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
 // http
 app.listen(3000, () => console.log(`HTTP on port ${3000}!`));
 
-// if production, add https
+// if production, add https, with this if no need to install certs locally
 if (process.env.NODE_ENV === 'production') {
   const sslkey = fs.readFileSync('/etc/pki/tls/private/ca.key');
   const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');

@@ -25,8 +25,9 @@ app.use('/auth', authRoute);
 app.use('/cat', passport.authenticate('jwt', {session: false}), catRoute);
 app.use('/user', passport.authenticate('jwt', {session: false}), userRoute);
 
-app.listen(3000); //normal http traffic
+app.listen(3000, () => console.log(`Example app listening on port ${3000}!`));
 
+console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'production') {
   const sslkey  = fs.readFileSync('/etc/pki/tls/private/ca.key');
   const sslcert = fs.readFileSync('/etc/pki/tls/certs/ca.crt');

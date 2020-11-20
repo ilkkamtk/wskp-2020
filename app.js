@@ -17,9 +17,9 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
 app.use(bodyParser.json());
-console.log(`https://${req.headers.host}${proxypath}${req.url}`);
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
+    console.log(`https://${req.headers.host}${proxypath}${req.url}`);
     if (req.secure) {
       // request was via https, so do no special handling
       console.log('running secure!');

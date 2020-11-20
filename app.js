@@ -7,7 +7,7 @@ const userRoute = require('./routes/userRoute');
 const passport = require('./utils/pass.js');
 const authRoute = require('./routes/authRoute');
 const app = express();
-let port = 3000;
+let port = 8000;
 
 app.enable('trust proxy');
 
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 // parse application/json
 app.use(bodyParser.json());
-
+/*
 if (process.env.NODE_ENV === "production") {
   port = 8000;
   app.use ((req, res, next) => {
@@ -37,7 +37,7 @@ if (process.env.NODE_ENV === "production") {
     }
   });
 }
-
+*/
 app.use(express.static('uploads'));
 app.use(express.static('public'));
 app.use('/thumbnails', express.static('thumbnails'));

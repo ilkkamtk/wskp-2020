@@ -25,10 +25,10 @@ if (process.env.NODE_ENV === 'production') {
     console.log('tuotannossa ollaan', req.secure);
     if (req.secure) {
       // request was via https, so do no special handling
-      console.log('running secure!');
+      // console.log('running secure!');
       next();
     } else {
-      console.log('running insecure!');
+      // console.log('running insecure!');
       // if express app run under proxy with sub path URL
       // e.g. http://www.myserver.com/app/
       // then, in your .env, set PROXY_PASS=/app

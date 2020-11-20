@@ -36,7 +36,7 @@ if (process.env.NODE_ENV === 'production') {
       const proxypath = process.env.PROXY_PASS || '';
       // request was via http, so redirect to https
       console.log(`https://${req.headers.host}${proxypath}${req.url}`);
-      res.redirect(301, `https://${req.headers.host}${proxypath}${req.url}`);
+      // res.redirect(301, `https://${req.headers.host}${proxypath}${req.url}`);
     }
   });
 }

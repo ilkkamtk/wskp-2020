@@ -1,4 +1,6 @@
 // functions that communicate with the backend are in this file
+// Self invoking function "exported" as 'communication'. This is an older alternative to export.default.
+// See returns at the end of the file.
 const communication = (() => {
   'use strict';
   const urlToServer = '.'; // change url when uploading to server if necessary

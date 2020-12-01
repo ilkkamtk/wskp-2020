@@ -1,14 +1,20 @@
 'use strict';
-const url = 'http://localhost:3000'; // change url when uploading to server
+const url = '.'; // change url when uploading to server
 
 // select existing html elements
 const loginWrapper = document.querySelector('#login-wrapper');
+const userInfo = document.querySelector('#user-info');
 const logOut = document.querySelector('#log-out');
+const main = document.querySelector('main');
 const loginForm = document.querySelector('#login-form');
+const addUserForm = document.querySelector('#add-user-form');
 const addForm = document.querySelector('#add-cat-form');
 const modForm = document.querySelector('#mod-cat-form');
 const ul = document.querySelector('ul');
 const userLists = document.querySelectorAll('.add-owner');
+const imageModal = document.querySelector('#image-modal');
+const modalImage = document.querySelector('#image-modal img');
+const close = document.querySelector('#image-modal a');
 
 // create cat cards
 const createCatCards = (cats) => {
@@ -17,9 +23,22 @@ const createCatCards = (cats) => {
   cats.forEach((cat) => {
     // create li with DOM methods
     const img = document.createElement('img');
-    img.src = url + '/' + cat.filename;
+    img.src = url + '/thumbnails/' + cat.filename;
     img.alt = cat.name;
     img.classList.add('resp');
+
+    // open large image when clicking image
+    img.addEventListener('click', () => {
+      modalImage.src = url + '/' + cat.filename;
+      imageModal.alt = cat.name;
+      imageModal.classList.toggle('hide');
+      try {
+        const coords = cat.coords.split(',');
+        // console.log(coords);
+        addMarker(coords);
+      } catch (e) {
+      }
+    });
 
     const figure = document.createElement('figure').appendChild(img);
 
@@ -51,17 +70,10 @@ const createCatCards = (cats) => {
     const delButton = document.createElement('button');
     delButton.innerHTML = 'Delete';
     delButton.addEventListener('click', async () => {
-      const fetchOptions = {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-        },
-      };
       try {
-        const response = await fetch(url + '/cat/' + cat.cat_id, fetchOptions);
-        const json = await response.json();
+        const json = await communication.deleteCat(cat.cat_id);
         console.log('delete response', json);
-        getCat();
+        getCat(); // update cat list
       } catch (e) {
         console.log(e.message());
       }
@@ -81,26 +93,26 @@ const createCatCards = (cats) => {
   });
 };
 
-// AJAX call
+// close modal
+close.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  imageModal.classList.toggle('hide');
+});
 
+// get all cats
 const getCat = async () => {
   console.log('getCat token ', sessionStorage.getItem('token'));
   try {
-    const options = {
-      headers: {
-        Authorization: 'Bearer ' + sessionStorage.getItem('token'),
-      },
-    };
-    const response = await fetch(url + '/cat', options);
-    const cats = await response.json();
+    const cats = await communication.getCats();
     createCatCards(cats);
   } catch (e) {
-    console.log(e.message);
+    alert(e.message);
   }
 };
 
 // create user options to <select>
-const createUserOptions = (users) => {
+const createUserOptions = async () => {
+  const users = await communication.getUsers();
   userLists.forEach((list) => {
     // clear user list
     list.innerHTML = '';
@@ -115,89 +127,104 @@ const createUserOptions = (users) => {
   });
 };
 
-// get users to form options
-const getUsers = async () => {
-  try {
-    const options = {
-      headers: {
-        'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-      },
-    };
-    const response = await fetch(url + '/user', options);
-    const users = await response.json();
-    createUserOptions(users);
-  } catch (e) {
-    console.log(e.message);
-  }
-};
-
 // submit add cat form
 addForm.addEventListener('submit', async (evt) => {
   evt.preventDefault();
   const fd = new FormData(addForm);
-  const fetchOptions = {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-    },
-    body: fd,
-  };
-  const response = await fetch(url + '/cat', fetchOptions);
-  const json = await response.json();
-  console.log('add response', json);
-  getCat();
+  try {
+    const json = await communication.addCat(fd);
+    console.log('add response', json);
+    if (json) {
+      console.log('here');
+      getCat(); // refresh cat list after upload
+    }
+  } catch (e) {
+    alert(e.message);
+  }
 });
 
 // submit modify form
 modForm.addEventListener('submit', async (evt) => {
   evt.preventDefault();
   const data = serializeJson(modForm);
-  const fetchOptions = {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + sessionStorage.getItem('token'),
-    },
-    body: JSON.stringify(data),
-  };
-
-  console.log(fetchOptions);
-  const response = await fetch(url + '/cat', fetchOptions);
-  const json = await response.json();
-  console.log('modify response', json);
-  getCat();
+  try {
+    const json = await communication.modifyCat(data);
+    if (json) {
+      console.log('here');
+      getCat();
+    }
+  } catch (e) {
+    alert(e.message);
+  }
 });
 
 // login
 loginForm.addEventListener('submit', async (evt) => {
   evt.preventDefault();
   const data = serializeJson(loginForm);
-  const fetchOptions = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(data),
-  };
-
-  const response = await fetch(url + '/auth/login', fetchOptions);
-  const json = await response.json();
-  console.log('login response', json);
-  if (!json.user) {
-    alert(json.message);
-  } else {
-    sessionStorage.setItem('token', json.token);
-    loginWrapper.style.display = 'none';
-    logOut.style.display = 'block';
-    getCat();
-    getUsers();
+  try {
+    const json = await communication.login(data);
+    if (!json.user) {
+      alert(json.message);
+    } else {
+      // save token
+      sessionStorage.setItem('token', json.token);
+      // show/hide forms + cats
+      loginWrapper.style.display = 'none';
+      logOut.style.display = 'block';
+      main.style.display = 'block';
+      userInfo.innerHTML = `Hello ${json.user.name}`;
+      getCat();
+      createUserOptions();
+    }
+  } catch (e) {
+    alert(e.message);
   }
 });
 
-// check if token exists and hide login form, show logout button, get cats and users
+// logout
+logOut.addEventListener('click', async (evt) => {
+  evt.preventDefault();
+  try {
+    const json = await communication.logout();
+    console.log(json);
+    // remove token
+    sessionStorage.removeItem('token');
+    alert('You have logged out');
+    // show/hide forms + cats
+    loginWrapper.style.display = 'flex';
+    logOut.style.display = 'none';
+    main.style.display = 'none';
+  } catch (e) {
+    alert(e.message);
+  }
+});
+
+// submit register form
+addUserForm.addEventListener('submit', async (evt) => {
+  evt.preventDefault();
+  const data = serializeJson(addUserForm);
+  try {
+  const json = await communication.register(data);
+  // save token
+  sessionStorage.setItem('token', json.token);
+  // show/hide forms + cats
+  loginWrapper.style.display = 'none';
+  logOut.style.display = 'block';
+  main.style.display = 'block';
+  userInfo.innerHTML = `Hello ${json.user.name}`;
+  getCat();
+  createUserOptions();
+} catch (e) {
+  alert(e.message);
+}
+});
+
+// when app starts, check if token exists and hide login form, show logout button and main content, get cats and users
 if (sessionStorage.getItem('token')) {
   loginWrapper.style.display = 'none';
   logOut.style.display = 'block';
+  main.style.display = 'block';
   getCat();
-  getUsers();
+  createUserOptions();
 }

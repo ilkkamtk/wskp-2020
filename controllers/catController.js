@@ -8,14 +8,22 @@ const {getCoordinates} = require('../utils/imageMeta');
 const cats = catModel.cats;
 
 const cat_list_get = async (req, res) => {
-  const cats = await catModel.getAllCats();
-  res.json(cats);
+  try {
+    const cats = await catModel.getAllCats();
+    res.json(cats);
+  } catch (e) {
+    res.status(500).json({error: e.message});
+  }
 };
 
 const cat_get = async (req, res) => {
-  const id = req.params.id;
-  const cat = await catModel.getCat(id);
-  res.json(cat);
+  try {
+    const id = req.params.id;
+    const cat = await catModel.getCat(id);
+    res.json(cat);
+  } catch (e) {
+    res.status(500).json({error: e.message});
+  }
 };
 
 const cat_create_post = async (req, res) => {
@@ -30,15 +38,20 @@ const cat_create_post = async (req, res) => {
     coords = await getCoordinates(req.file.path);
   } catch (e) {
     console.log(e);
-    coords = [60,20];
+    coords = [60, 20];
   }
 
   console.log('coords', coords);
   // object destructuring
   const {name, age, weight, owner} = req.body;
-  const params = [name, age, weight, owner, req.file.filename, coords];
-  const cat = await catModel.addCat(params);
-  res.json({message: 'upload ok'});
+  const params = [name, age, weight, owner, req.file.filename, coords.toString()];
+  try {
+    const cat = await catModel.addCat(params);
+    console.log(cat);
+    res.json({message: `added ${cat.affectedRows} item`});
+  } catch (e) {
+    res.status(500).json({error: e.message});
+  }
 };
 
 const cat_update_put = async (req, res) => {
@@ -50,14 +63,22 @@ const cat_update_put = async (req, res) => {
   // object destructuring
   const {name, age, weight, owner, id} = req.body;
   const params = [name, age, weight, owner, id];
-  const cat = await catModel.updateCat(params);
-  res.json({message: 'modify ok'});
+  try {
+    const cat = await catModel.updateCat(params);
+    res.json({message: 'modify ok'});
+  } catch (e) {
+    res.status(500).json({error: e.message});
+  }
 };
 
 const cat_delete = async (req, res) => {
   const id = req.params.id;
-  const cat = await catModel.deleteCat(id);
-  res.json(cat);
+  try {
+    const cat = await catModel.deleteCat(id);
+    res.json(cat);
+  } catch (e) {
+    res.status(500).json({error: e.message});
+  }
 };
 
 const make_thumbnail = async (req, res, next) => {
